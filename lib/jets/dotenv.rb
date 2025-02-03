@@ -17,7 +17,7 @@ class Jets::Dotenv
   def load!
     return @@vars if @@vars
     return if on_aws? # this prevents ssm calls if used in dotenv files
-    vars = ::Dotenv.load(*dotenv_files)
+    vars = ::Dotenv.parse(*dotenv_files)
     @@vars = Ssm.new(vars).interpolate!
   end
 
