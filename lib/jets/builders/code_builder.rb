@@ -30,6 +30,7 @@ module Jets::Builders
       cache_check_message
 
       clean_start
+      reset_dotenv_vars
       assets_precompile
       run_webpack # easier to do before we copy the project because node and yarn has been likely setup in the that dir
       copy_project
@@ -244,6 +245,12 @@ module Jets::Builders
     def clean_start
       Dir.glob("#{Jets.build_root}/code/code-*.zip").each { |f| FileUtils.rm_f(f) }
       FileUtils.mkdir_p(Jets.build_root) # /tmp/jets/demo
+    end
+
+    # Resets Dotenv cached variables so that it will force the Dotenv files to reload including
+    # the .remote files for deployment
+    def reset_dotenv_vars
+      Jets::Dotenv.class_variable_set(:@@vars, nil)
     end
 
     # Copy project into temporary directory. Do this so we can keep the project
