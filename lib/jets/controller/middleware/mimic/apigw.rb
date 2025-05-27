@@ -40,7 +40,7 @@ class Jets::Controller::Middleware::Mimic
         "multiValueQueryStringParameters" => multi_value_query_string_parameters,
         "pathParameters" => @route.extract_parameters(path),
         "stageVariables" => nil,
-        "requestContext" => {},
+        "requestContext" => request_context,
         "body" => get_body,
         "isBase64Encoded" => false,
       }
@@ -62,6 +62,16 @@ class Jets::Controller::Middleware::Mimic
       "Origin" => "origin",
       "Upgrade-Insecure-Requests" => "upgrade-insecure-requests",
     }
+
+    # For mocking in RSepc:
+    #
+    #    allow_any_instance_of(Jets::Controller::Middleware::Mimic::Apigw).to receive(:request_context) {
+    #       {'authorizer' => { 'claims' => { 'sub' => sub, 'email_verified' => 'true', 'email' => 'me@example.com' }}}
+    #    }
+    #
+    def request_context
+      {}
+    end
 
     # Map rack env headers to Api Gateway event headers. Most rack env headers are
     # prepended by HTTP_.
