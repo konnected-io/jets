@@ -68,6 +68,7 @@ module Jets::Cfn::Builder::Api
     memoize :existing_domain_name?
 
     def existing_domain_name_on_stack?
+      return false unless api_gateway_physical_resource_id
       cfn.describe_stack_resource(
         stack_name: api_gateway_physical_resource_id,
         logical_resource_id: "DomainName"
@@ -79,6 +80,7 @@ module Jets::Cfn::Builder::Api
     end
 
     def existing_dns_record_on_stack?
+      return false unless api_gateway_physical_resource_id
       cfn.describe_stack_resource(
         stack_name: api_gateway_physical_resource_id,
         logical_resource_id: "DnsRecord"
