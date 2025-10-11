@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project *loosely tries* to adhere to [Semantic Versioning](http://semver.org/).
 
+## [5.0.15] - 2025-10-11
+- update jets-api 0.2.1 dependency
+- require logger super early
+- require logger and mutex_m dependency
+- add activemodel 7.0.8 dependency
+- update to transfer manager upload file to remove deprecation warning
+- update GEM_REGEXP match -gnu for Gemfile.lock rewrite
+
 ## [5.0.14] - 2024-05-20
 - [#719](https://github.com/rubyonjets/jets/pull/719) Support for s3 event sns configuration
 - [#722](https://github.com/rubyonjets/jets/pull/722) Sets config.cache_classes to true in test env
