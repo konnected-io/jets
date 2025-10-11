@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project *loosely tries* to adhere to [Semantic Versioning](http://semver.org/).
 
+## [5.0.17] - 2025-10-11
+
+- fix crash on deploy if parent stack exists but ApiGateway does not exist yet
+- extract method for request_context so it can be mocked more easily in tests
+- reset Dotenv vars when building/deploying so that remote variables are included
+- use Dotenv.parse to ensure all variables are returned
+- payload may be nil when invoking a Lambda function
+
 ## [5.0.16] - 2025-10-11
 - update dependency jets-api 0.2.2
 
