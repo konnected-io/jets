@@ -1,6 +1,8 @@
 $stdout.sync = true unless ENV["JETS_STDOUT_SYNC"] == "0"
 $:.unshift(File.expand_path("../", __FILE__))
 
+require "logger" # must require super early
+
 require "active_support"
 require "active_support/concern"
 require "active_support/core_ext"
@@ -16,7 +18,6 @@ require "rainbow/ext/string"
 require "jets-api"
 require "jets-git"
 
-require "logger"
 require "jets/core_ext"
 require "jets/autoloaders"
 loader = Jets::Autoloaders.for_gem
