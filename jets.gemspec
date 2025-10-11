@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "actionmailer", "~> 7.0.8"
   spec.add_dependency "actionpack", "~> 7.0.8"
   spec.add_dependency "actionview", "~> 7.0.8"
+  spec.add_dependency "activemodel", "~> 7.0.8"
   spec.add_dependency "activerecord", "~> 7.0.8"
   spec.add_dependency "activesupport", "~> 7.0.8"
   spec.add_dependency "railties", "~> 7.0.8" # for ActiveRecord database_tasks.rb
@@ -53,6 +54,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "gems"
   spec.add_dependency "hashie"
   spec.add_dependency "jets-api", ">= 0.1.4"
+  # spec.add_dependency "jets-api", ">= 0.1.5"
   spec.add_dependency "jets-git"
   spec.add_dependency "jets-html-sanitizer"
   spec.add_dependency "kramdown"
