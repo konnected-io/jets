@@ -16,6 +16,7 @@ require "rainbow/ext/string"
 require "jets-api"
 require "jets-git"
 
+require "logger"
 require "jets/core_ext"
 require "jets/autoloaders"
 loader = Jets::Autoloaders.for_gem

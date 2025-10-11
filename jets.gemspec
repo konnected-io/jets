@@ -53,6 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dsl_evaluator", ">= 0.3.0" # for DslEvaluator.print_code
   spec.add_dependency "gems"
   spec.add_dependency "hashie"
+  spec.add_dependency "logger"
   spec.add_dependency "jets-api", ">= 0.1.4"
   # spec.add_dependency "jets-api", ">= 0.1.5"
   spec.add_dependency "jets-git"
@@ -60,6 +61,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "kramdown"
   spec.add_dependency "memoist"
   spec.add_dependency "mini_mime"
+  spec.add_dependency "mutex_m"
   spec.add_dependency "rack"
   spec.add_dependency "rainbow"
   spec.add_dependency "recursive-open-struct"
