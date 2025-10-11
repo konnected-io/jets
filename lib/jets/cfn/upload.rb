@@ -1,11 +1,15 @@
-require 'active_support/number_helper'
-require 'digest'
-require 'rack/mime'
+require "active_support/number_helper"
+require "digest"
+require "rack/mime"
 
 module Jets::Cfn
   class Upload
     include Jets::AwsServices
     include ActiveSupport::NumberHelper # number_to_human_size
+
+    def transfer_manager
+      @transfer_manager ||= Aws::S3::TransferManager.new
+    end
 
     def upload
       upload_cfn_templates
@@ -17,7 +21,7 @@ module Jets::Cfn
       Jets.s3_bucket
     end
 
-    def upload_cfn_templates(version=nil)
+    def upload_cfn_templates(version = nil)
       puts "Uploading CloudFormation templates to S3." unless version # hide message when version is passed in
       expression = "#{Jets::Names.templates_folder}/*"
       if version # outside of each loop to avoid repeating
@@ -26,13 +30,11 @@ module Jets::Cfn
         checksum = Jets::Builders::Md5.checksums["stage/code"]
         version = "shas/#{checksum}"
       end
-      checksum = Jets::Builders::Md5.checksums["stage/code"]
       Dir.glob(expression).each do |path|
         next unless File.file?(path)
-        key = ["jets/cfn-templates", version, File.basename(path)].compact.join('/')
-        obj = s3_resource.bucket(bucket_name).object(key)
-        puts "Uploading #{path} to s3://#{bucket_name}/#{key}".color(:green) if ENV['JETS_DEBUG']
-        obj.upload_file(path)
+        key = ["jets/cfn-templates", version, File.basename(path)].compact.join("/")
+        puts "Uploading #{path} to s3://#{bucket_name}/#{key}".color(:green) if ENV["JETS_DEBUG"]
+        transfer_manager.upload_file(path, bucket: bucket_name, key: key)
       end
     end
 
@@ -50,17 +52,16 @@ module Jets::Cfn
       puts "Uploading #{path} (#{file_size}) to S3"
       start_time = Time.now
       s3_key = "jets/code/#{File.basename(path)}"
-      obj = s3_resource.bucket(bucket_name).object(s3_key)
-      obj.upload_file(path)
+      transfer_manager.upload_file(path, bucket: bucket_name, key: s3_key)
       puts "Uploaded to s3://#{bucket_name}/#{s3_key}".color(:green)
-      puts "Time to upload code to s3: #{pretty_time(Time.now-start_time).color(:green)}"
+      puts "Time to upload code to s3: #{pretty_time(Time.now - start_time).color(:green)}"
     end
 
     def upload_assets
       puts "Checking for modified public assets and uploading to S3."
       start_time = Time.now
       upload_public_assets
-      puts "Time for public assets to s3: #{pretty_time(Time.now-start_time).color(:green)}"
+      puts "Time for public assets to s3: #{pretty_time(Time.now - start_time).color(:green)}"
     end
 
     def upload_public_assets
@@ -87,37 +88,36 @@ module Jets::Cfn
     end
 
     def upload_to_s3(full_path)
-      if identical_on_s3?(full_path) && !ENV['JETS_ASSET_UPLOAD_FORCE']
-        puts "Asset is identical on s3: #{full_path}" if ENV['JETS_DEBUG_ASSETS']
+      if identical_on_s3?(full_path) && !ENV["JETS_ASSET_UPLOAD_FORCE"]
+        puts "Asset is identical on s3: #{full_path}" if ENV["JETS_DEBUG_ASSETS"]
         return
       end
 
       key = s3_key(full_path)
-      obj = s3_resource.bucket(bucket_name).object(key)
       content_type = content_type_headers(full_path)
-      if ENV['JETS_DEBUG_ASSETS']
+      if ENV["JETS_DEBUG_ASSETS"]
         puts "Uploading and setting content type for s3://#{bucket_name}/#{key} content_type #{content_type[:content_type].inspect}"
       end
-      obj.upload_file(full_path, { acl: "public-read", cache_control: cache_control }.merge(content_type))
+      transfer_manager.upload_file(full_path, bucket: bucket_name, key: key, acl: "public-read", cache_control: cache_control, **content_type)
     end
 
     CONTENT_TYPES_BY_EXTENSION = {
-      '.css'  => 'text/css',
-      '.html' => 'text/html',
-      '.js'   => 'application/javascript',
+      ".css" => "text/css",
+      ".html" => "text/html",
+      ".js" => "application/javascript"
     }
     def content_type_headers(full_path)
       ext = File.extname(full_path)
       content_type = CONTENT_TYPES_BY_EXTENSION[ext] || Rack::Mime.mime_type(ext)
       if content_type
-        { content_type: content_type }
+        {content_type: content_type}
       else
         {}
       end
     end
 
     def s3_key(full_path)
-      relative_path = full_path.sub("#{Jets.root}/", '')
+      relative_path = full_path.sub("#{Jets.root}/", "")
       "jets/#{relative_path}"
     end
 

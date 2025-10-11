@@ -4,7 +4,7 @@ module Jets::Cfn
 
     attr_reader :path
 
-    def initialize(path, options={})
+    def initialize(path, options = {})
       @path = path
       @options = options
     end
@@ -25,7 +25,8 @@ module Jets::Cfn
       end
     end
 
-  private
+    private
+
     def upload_to_s3?
       return false if @options[:stack_type] == :minimal # bucket not yet available
       bucket_name.present?
@@ -48,14 +49,17 @@ module Jets::Cfn
     end
 
     def upload_file_to_s3
-      obj = s3_resource.bucket(bucket_name).object(s3_key)
-      obj.upload_file(path)
+      transfer_manager.upload_file(path, bucket: bucket_name, key: s3_key)
 
       "https://s3.amazonaws.com/#{bucket_name}/#{s3_key}"
     end
 
     def s3_key
       @s3_key ||= "jets/cfn-templates/#{File.basename(path)}"
+    end
+
+    def transfer_manager
+      @transfer_manager ||= Aws::S3::TransferManager.new
     end
 
     class << self
@@ -81,7 +85,7 @@ module Jets::Cfn
           template[:Outputs].keys.include?(key.to_sym)
         end
 
-        name = File.basename(found_template).sub(/\.yml$/,'')
+        name = File.basename(found_template).sub(/\.yml$/, "")
         name.underscore.camelize # IE: ApiResources1
       end
     end
