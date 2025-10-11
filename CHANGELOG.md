@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 This project *loosely tries* to adhere to [Semantic Versioning](http://semver.org/).
 
+## [5.0.16] - 2025-10-11
+- update dependency jets-api 0.2.2
+
 ## [5.0.15] - 2025-10-11
 - update jets-api 0.2.1 dependency
 - require logger super early
