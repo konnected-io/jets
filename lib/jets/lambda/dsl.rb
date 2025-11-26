@@ -64,6 +64,7 @@ module Jets::Lambda::Dsl
         handler
         kms_key_arn
         memory_size
+        recursive_loop
         reserved_concurrent_executions
         role
         runtime
